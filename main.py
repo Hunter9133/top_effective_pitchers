@@ -1,13 +1,5 @@
-# This small script will find and display the 20 most efficient QUALIFIED pitchers 
-# in the 2025 MLB regular season through the use of the pybaseball library and pandas. 
-# Efficiency is defined as taking on a large workload while maintaining high effectiveness.
-# Pitchers who can work deep into games while keeping runs off the board will be 
-# ranked the highest. 
+# Made by: Hunter Davis
 
-# A simple efficiency score metric will be defined as:
-# ((K% - BB%) x IP) / SIERA)
-
-# !! Hightlight in post that this is not everything that goes into evaluating a pitcher !!
 
 import pybaseball as pyb
 import matplotlib.pyplot as plt
