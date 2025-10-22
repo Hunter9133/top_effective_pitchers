@@ -29,7 +29,7 @@ def calculate_efficiency_index(df):
 
     return df
 
-def visualize_data(top_pitchers, year, num_pitchers=15):
+def visualize_data(top_pitchers, year, num_pitchers):
     """
     Creates a horizontal bar chart to visualize the top N pitchers
     using a sequential color palette, with the darkest color for the most efficient pitcher.
@@ -64,6 +64,8 @@ def visualize_data(top_pitchers, year, num_pitchers=15):
     ax.invert_yaxis()
     
     plt.tight_layout()
+    filename = f'top_{num_pitchers}_pitchers_{year}.png'
+    plt.savefig(filename, dpi=300)
     plt.show()
 
 def find_top_pitchers(year, min_ip, num_pitchers=20):
@@ -94,7 +96,7 @@ def find_top_pitchers(year, min_ip, num_pitchers=20):
     visualize_data(top_pitchers, year, num_pitchers)
 
 if __name__ == "__main__":
-    current_year = 2025
+    current_year = 2024
     minimum_innings_pitched = 150
     find_top_pitchers(current_year, minimum_innings_pitched)
 
