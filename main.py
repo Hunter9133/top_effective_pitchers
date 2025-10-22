@@ -3,9 +3,9 @@
 from pybaseball import pitching_stats
 import matplotlib.pyplot as plt
 
-def calculate_efficiency_index(df):
+def calculate_PSI(df):
     """
-    Calculates a custom pitcher efficiency index based on Z-scores of K-BB% and SIERA.
+    Calculates a custom pitcher performance and skill index (PSI) based on Z-scores of K-BB% and SIERA.
     The index is scaled so 100 is the league average.
     """
     df = df[df['IP'] > 0]
@@ -22,44 +22,44 @@ def calculate_efficiency_index(df):
     siera_weight = 0.6
     k_bb_weight = 0.4
     
-    df['Efficiency_Index'] = (df['siera_zscore'] * siera_weight + df['k_bb_zscore'] * k_bb_weight)
+    df['PSI'] = (df['siera_zscore'] * siera_weight + df['k_bb_zscore'] * k_bb_weight)
     
-    final_index_scaled = 100 + (df['Efficiency_Index'] * 10)
-    df['Efficiency_Index'] = final_index_scaled
+    final_index_scaled = 100 + (df['PSI'] * 10)
+    df['PSI'] = final_index_scaled
 
     return df
 
 def visualize_data(top_pitchers, year, num_pitchers):
     """
     Creates a horizontal bar chart to visualize the top N pitchers
-    using a sequential color palette, with the darkest color for the most efficient pitcher.
+    using a sequential color palette, with the darkest color for the most effective pitcher.
     """
     plot_data = top_pitchers.head(num_pitchers).copy()
     
     pitcher_names = plot_data['Name']
-    efficiency_scores = plot_data['Efficiency_Index']
+    PSI_scores = plot_data['PSI']
 
-    norm = plt.Normalize(efficiency_scores.min(), efficiency_scores.max())
+    norm = plt.Normalize(PSI_scores.min(), PSI_scores.max())
     cmap = plt.get_cmap('Blues')
-    colors = cmap(norm(efficiency_scores))
+    colors = cmap(norm(PSI_scores))
 
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.barh(
         pitcher_names,
-        efficiency_scores,
+        PSI_scores,
         color=colors,         
         edgecolor='darkblue', 
         linewidth=1,          
     )
     
-    ax.set_title(f'Top {num_pitchers} Most Efficient Starters in {year}', fontsize=16, weight='bold')
-    ax.set_xlabel('Custom Efficiency Index (100 = League Average)', fontsize=12, weight='bold')
+    ax.set_title(f'Top {num_pitchers} Most Effective Starters in {year}', fontsize=16, weight='bold')
+    ax.set_xlabel('Performance and Skill Index (100 = League Average)', fontsize=12, weight='bold')
     ax.set_ylabel('Pitcher', fontsize=12, weight='bold')
 
-    for index, value in enumerate(efficiency_scores):
+    for index, value in enumerate(PSI_scores):
         ax.text(value + 1, index, f'{value:.2f}', va='center')
         
-    ax.set_xlim(left=95, right=max(efficiency_scores) + 5)
+    ax.set_xlim(left=95, right=max(PSI_scores) + 5)
     
     ax.invert_yaxis()
     
@@ -70,8 +70,8 @@ def visualize_data(top_pitchers, year, num_pitchers):
 
 def find_top_pitchers(year, min_ip, num_pitchers=20):
     """
-    Fetches pitcher data for a given year, calculates the custom efficiency
-    index, and returns a sorted list of the top performers.
+    Fetches pitcher data for a given year, calculates the PSI
+    and returns a sorted list of the top performers.
     """
     print(f"Fetching pitcher data for the {year} season from FanGraphs...")
     
@@ -83,14 +83,14 @@ def find_top_pitchers(year, min_ip, num_pitchers=20):
         print("No qualified pitchers found. Check year and minimum IP.")
         return
         
-    print(f"Calculating efficiency index for {len(qualified_pitchers)} qualified pitchers...")
+    print(f"Calculating PSI for {len(qualified_pitchers)} qualified pitchers...")
     
-    pitchers_with_index = calculate_efficiency_index(qualified_pitchers)
+    pitchers_with_index = calculate_PSI(qualified_pitchers)
     
-    top_pitchers = pitchers_with_index.sort_values(by='Efficiency_Index', ascending=False)
+    top_pitchers = pitchers_with_index.sort_values(by='PSI', ascending=False)
     
     print(f"\nTop {num_pitchers} Most Efficient Pitchers in {year} (min {min_ip} IP):")
-    display_cols = ['Name', 'Team', 'IP', 'K-BB%', 'SIERA', 'Efficiency_Index']
+    display_cols = ['Name', 'Team', 'IP', 'K-BB%', 'SIERA', 'PSI']
     print(top_pitchers[display_cols].head(num_pitchers).to_string(index=False))
 
     visualize_data(top_pitchers, year, num_pitchers)
