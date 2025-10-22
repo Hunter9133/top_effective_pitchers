@@ -1,11 +1,8 @@
-# My Project
+# Evaluating Pitcher Effectiveness with a Custom Sabermetric Index
 
-This small script will find and visualize the 20 most efficient QUALIFIED (pitched 162 or more innings) pitchers 
-in the 2025 MLB regular season through the use of the pybaseball library. 
-Efficiency is defined as taking on a large workload while maintaining high effectiveness.
-Pitchers who can work deep into games while keeping runs off the board will be 
-ranked the highest. 
+Based on this project, a pitcher's effectiveness is defined as their performance relative to the league average, highlighting their true skill by combining the advanced metrics of SIERA and K-BB%.
 
-A simple efficiency score metric will be defined as:
-((K% - BB%) x IP) / SIERA
+In order to do this, I made my own custom efficiency metric using K-BB% and SIERA. I first standardized the two stats, since one is a rate state and one is a performance stat, by calculating the Z-score of each for every pitcher in a given year, in this case 2024 and 2025. Then I weighed SIERA 60% and K-BB% 40% and added them together to form a single index. I then scaled this index so that 100 represents the league average, allowing for easy comparison of performance across different seasons.
+
+
 
